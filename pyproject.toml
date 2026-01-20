@@ -1,0 +1,11 @@
+[project]
+name = "markdown-link-preview"
+version = "0.1.0"
+description = "Convert Markdown to GitHub-themed HTML with Facebook-style link previews."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "beautifulsoup4>=4.14.3",
+    "markdown>=3.10",
+    "requests>=2.32.5",
+]
