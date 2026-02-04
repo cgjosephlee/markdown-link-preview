@@ -1,7 +1,7 @@
 import argparse
 import json
 import os
-import requests
+from curl_cffi import requests
 import markdown
 import sys
 import re
@@ -158,12 +158,15 @@ def save_cache(cache):
 
 
 def fetch_url_content(url):
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36"
-    }
-    response = requests.get(url, headers=headers, timeout=5)
-    response.raise_for_status()
-    return response.text
+    # impersonate="chrome142" simulates a modern Chrome browser to bypass Cloudflare
+    # curl_cffi automatically handles TLS/JA3 fingerprints to match the impersonated browser
+    try:
+        response = requests.get(url, impersonate="chrome142", timeout=10)
+        response.raise_for_status()
+        return response.text
+    except Exception as e:
+        print(f"Error fetching {url}: {e}")
+        raise
 
 
 def fetch_metadata(url, cache):
