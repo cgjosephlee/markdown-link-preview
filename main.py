@@ -157,20 +157,25 @@ def save_cache(cache):
 # --- Metadata Fetching ---
 
 
+def fetch_url_content(url):
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36"
+    }
+    response = requests.get(url, headers=headers, timeout=5)
+    response.raise_for_status()
+    return response.text
+
+
 def fetch_metadata(url, cache):
     if url in cache:
         print(f"Cache hit for: {url}")
         return cache[url]
 
     print(f"Fetching metadata for: {url}")
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36"
-    }
 
     try:
-        response = requests.get(url, headers=headers, timeout=5)
-        response.raise_for_status()
-        soup = BeautifulSoup(response.text, "html.parser")
+        html_content = fetch_url_content(url)
+        soup = BeautifulSoup(html_content, "html.parser")
 
         def get_meta(property_name):
             tag = soup.find("meta", property=property_name) or soup.find(
